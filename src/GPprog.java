@@ -79,14 +79,15 @@ system stack
  8. n ne e
  */
 
-public class GPprog implements GPprogLang {
+public class GPprog implements GPprogLang, GPprogGridAPI {
 
 	private int atGridx;
 	private int atGridy;
 	private LinkedList<Keyword> prog;
 	
-	private Stack<Keyword> dfsStack = new Stack<Keyword>();
-	private Stack<Boolean> valStack = new Stack<Boolean>();
+	private boolean returnVal;
+	private boolean 
+	private Stack<Keyword> simsysStack = new Stack<Keyword>();
 	
 	public GPprog()
 	{
@@ -161,6 +162,25 @@ public class GPprog implements GPprogLang {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public int atGridX() {
+		// TODO Auto-generated method stub
+		return atGridx;
+	}
+
+	@Override
+	public int atGridY() {
+		// TODO Auto-generated method stub
+		return atGridy;
+	}
+
+	@Override
+	public void setXY(int x, int y) {
+		// TODO Auto-generated method stub
+		atGridx = x;
+		atGridy = y;
 	}
 
 }
