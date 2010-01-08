@@ -1,12 +1,10 @@
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Stack;
 
 
 public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 
 	// computer stack, register
-	private boolean retVal;
+	private boolean retVal = false;
 	private GPprog prog;
 	private int progCounter = 0;
 	private Stack<Integer> sysStack; // store operator wordcode
@@ -15,6 +13,10 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 	public GPprogEval(GPprog prog)
 	{
 		this.prog = prog;
+	}
+	
+	private Integer getCurrentInstruction() {
+		return prog.getProg().get(progCounter);
 	}
 	
 	private Type getType(Integer wordcode) {
@@ -41,17 +43,17 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 	{
 		// update execState
 		dfaStack.pop();
-		dfaStack.push(opExec);
+		dfaStack.push(nextS);
 	}
 	
-	private void evalArg()
+	private void pushCurrInstruction()
 	{
-		// push next program keyword for evaluation
-		int nextKw = progIter.next();
-		if(getType(nextKw) == Type.Operator) {
+		int currKw = getCurrentInstruction();
+		System.out.printf("next instruction = %s\n", KeywordString[currKw]);
+		if(getType(currKw) == Type.Operator) {
 			dfaStack.push(evalArg1st);
 		}
-		sysStack.push(nextKw);
+		sysStack.push(currKw);
 	}
 	
 	private void endProcedure()
@@ -63,10 +65,11 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 	
 	
 	private void opNot(Integer execState) {
-		switch(execState.intValue()) {
+		switch(execState) {
 		case evalArg1st: // evaluate first argument
 			nextState(opExec);
-			evalArg();
+			progCounter++;
+			pushCurrInstruction();
 			break;
 		case opExec:	// execute operation
 			// execute NOT operation
@@ -79,35 +82,70 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 	}
 	
 	private void opOr(Integer execState) {
-		switch(execState.intValue()) {
+		switch(execState) {
 		case evalArg1st: // evaluate first argument
 			nextState(opExec);
-			evalArg();
+			progCounter++;
+			pushCurrInstruction();
 			break;
 		case opExec:     // execute operation
-			if(retVal) endProcedure();
+			if(retVal) {
+				endProcedure();
+				progCounter = subtree_substringTail(progCounter+1);
+			}
 			else       nextState(evalArg2nd);
 			break;
 		case evalArg2nd: // evaluate second argument
-			evalArg();
 			endProcedure();
+			progCounter++;
+			pushCurrInstruction();
 			break;
 		}
 	}
 	
 	private void opAnd(Integer execState) {
-		switch(execState.intValue()) {
+		switch(execState) {
 		case evalArg1st: // evaluate first argument
 			nextState(opExec);
-			evalArg();
+			progCounter++;
+			pushCurrInstruction();
 			break;
 		case opExec: // execute operation
-			if(!retVal) endProcedure();
-			else        nextState(evalArg2nd);
+			if(retVal) nextState(evalArg2nd);
+			else {
+				endProcedure();
+				progCounter = subtree_substringTail(progCounter+1);
+			}
 			break;
 		case evalArg2nd:	
-			evalArg();
 			endProcedure();
+			progCounter++;
+			pushCurrInstruction();
+			break;
+		}
+	}
+	
+	private void opIF(Integer execState) {
+		System.out.printf("%d\n", execState);
+		switch(execState) {
+		case evalArg1st: // evaluate first argument
+			nextState(opExec);
+			progCounter++;
+			pushCurrInstruction();
+			break;
+		case opExec: // execute operation
+			if(retVal) nextState(evalArg2nd);
+			else       nextState(evalArg3rd);
+			break;
+		case evalArg2nd:	
+			endProcedure();
+			progCounter++;
+			pushCurrInstruction();
+			break;
+		case evalArg3rd:
+			endProcedure();
+			progCounter = subtree_substringTail(progCounter+1);
+			pushCurrInstruction();
 			break;
 		}
 	}
@@ -119,17 +157,25 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 		sysStack = new Stack<Integer>();
 		dfaStack = new Stack<Integer>();
 		
-		sysStack.push(progIter.next());
-		dfaStack.push(new Integer(0));
+		if(getType(getCurrentInstruction()) == Type.Operator)
+			dfaStack.push(evalArg1st);
 		
-		int keyword = n;
+		sysStack.push(getCurrentInstruction());
+		
+		int keyword = -1;
 		while(!sysStack.isEmpty()) {
+			System.out.printf("sysStack size = %d, ", sysStack.size());
+			System.out.printf("dfaStack size = %d ", dfaStack.size());
+			System.out.printf("PC = %d\n", progCounter);
 			keyword = sysStack.peek();
+			System.out.printf("%s", KeywordString[keyword]);
+			System.out.printf(" retVal = ");
+			System.out.println(retVal);
 			switch(keyword) {
 			case NOT: opNot(dfaStack.peek()); break;
-			case IF:	
+			case IF:  opIF(dfaStack.peek()); break;
 			case OR:  opOr(dfaStack.peek()); break;
-			case AND: break;
+			case AND: opAnd(dfaStack.peek()); break;
 			case n:
 			case w:
 			case s:
@@ -139,6 +185,7 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 			case sw:
 			case nw:
 				retVal = prog.sensor(keyword); 
+				sysStack.pop();
 				break;
 			case moveN:
 			case moveS:
@@ -166,6 +213,38 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 		}
 		else return null;
 			
+	}
+
+	@Override
+	public int subtree_substringTail(int substringHead) {
+		// TODO Auto-generated method stub
+		int substringTail = substringHead;
+		Stack<Boolean> dfsStack = new Stack<Boolean>();
+		dfsStack.push(true);
+		
+		while(!dfsStack.isEmpty()) {
+			System.out.printf("dfsStack size = %d\n", dfsStack.size());
+			dfsStack.pop();
+			Integer instruction = prog.getProg().get(substringTail);
+			
+			if(instruction == NOT) { 
+				dfsStack.push(true);
+			}
+			else
+			if(instruction == OR || instruction == AND) {
+				dfsStack.push(true);
+				dfsStack.push(true);
+			}
+			else
+			if(instruction == IF) {
+				dfsStack.push(true);
+				dfsStack.push(true);
+				dfsStack.push(true);
+			}
+			substringTail++;
+		}
+		
+		return substringTail;
 	}
 
 }

@@ -1,6 +1,4 @@
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Stack;
 
 /*
  * 
@@ -83,12 +81,13 @@ system stack
  8. n ne e
  */
 
-public class GPprog implements GPprogLangAPI, GPprogGridAPI
+public class GPprog implements GPprogLangAPI, GPprogAPI
 {
 
 	private GPgridworld gridworld;
 	private int atGridx;
 	private int atGridy;
+	
 	private LinkedList<Integer> prog;
 	
 	private GPprogInit progInit;
@@ -100,23 +99,8 @@ public class GPprog implements GPprogLangAPI, GPprogGridAPI
 		progInit = new GPprogInit();
 		progEval = new GPprogEval(this);
 		
-		// test
-		prog = new LinkedList<Integer>();
-		prog.add(NOT);
-		prog.add(AND);
-		prog.add(IF);
-		prog.add(ne);
-		prog.add(IF);
-		prog.add(se);
-		prog.add(moveS);
-		prog.add(moveW);
-		prog.add(moveN);
-		prog.add(NOT);
-		prog.add(NOT);
-		prog.add(e);
-		
 		// generate random program
-		// prog = progInit.generate();
+		prog = progInit.generate();
 	}
 
 	
@@ -128,14 +112,17 @@ public class GPprog implements GPprogLangAPI, GPprogGridAPI
 	@Override
 	public void executeAction() {
 		// TODO Auto-generated method stub
+		progEval.subtree_substringTail(0); // grammar check
 		Action action = progEval.evaluate();
 		switch(action) {
-		case moveN:
-		case moveS:
-		case moveE:
-		case moveW:
-		case idle:
+		case moveN: if(sensor(n)) atGridy--; break;
+		case moveS: if(sensor(s)) atGridy++; break;
+		case moveE: if(sensor(e)) atGridx++; break;
+		case moveW: if(sensor(w)) atGridx--; break;
+		case idle: break;
 		}
+		System.out.printf("%d, %d\n", atGridx, atGridy);
+		
 	}
 
 	@Override
@@ -150,9 +137,39 @@ public class GPprog implements GPprogLangAPI, GPprogGridAPI
 			return gridworld.getGridObj(atGridx-1, atGridy);
 		case e:
 			return gridworld.getGridObj(atGridx+1, atGridy);
+		case ne:
+			return gridworld.getGridObj(atGridx+1, atGridy-1);
+		case se:
+			return gridworld.getGridObj(atGridx+1, atGridy+1);
+		case nw:
+			return gridworld.getGridObj(atGridx-1, atGridy+1);
+		case sw:
+			return gridworld.getGridObj(atGridx-1, atGridy-1);
 		default:
 			return false;
 		}
+	}
+
+
+	@Override
+	public int atGridX() {
+		// TODO Auto-generated method stub
+		return atGridx;
+	}
+
+
+	@Override
+	public int atGridY() {
+		// TODO Auto-generated method stub
+		return atGridy;
+	}
+
+
+	@Override
+	public void setGridXY(int x, int y) {
+		// TODO Auto-generated method stub
+		atGridx = x;
+		atGridy = y;
 	}
 
 }
