@@ -45,7 +45,11 @@ system stack
  
  
 
- 
+ 0. |
+ 1. IF
+ 2. IF AND
+ 3. IF AND se
+ 4. IF AND 
  system stack, DFS stack (use linked-list)
  0. |
  top = "", do nothing, read IF, push IF
@@ -81,18 +85,22 @@ system stack
 
 public class GPprog implements GPprogLang, GPprogGridAPI {
 
+	private GPgridworld gridworld;
 	private int atGridx;
 	private int atGridy;
 	private LinkedList<Keyword> prog;
+	private Iterator<Keyword> progIter;
 	
-	private boolean returnVal;
-	private boolean 
-	private Stack<Keyword> simsysStack = new Stack<Keyword>();
+	// computer stack, register
+	private int retVal; 
+	private Stack<Keyword> sysStack = new Stack<Keyword>();
+	private Stack<Integer> dfaStack = new Stack<Integer>();
 	
-	public GPprog()
+	public GPprog(GPgridworld gridworld)
 	{
-		prog = new LinkedList<Keyword>();
+		this.gridworld = gridworld;
 		
+		prog = new LinkedList<Keyword>();
 		prog.add(Keyword.NOT);
 		prog.add(Keyword.AND);
 		prog.add(Keyword.IF);
@@ -107,6 +115,8 @@ public class GPprog implements GPprogLang, GPprogGridAPI {
 		prog.add(Keyword.e);
 		// generate random program
 	}
+	
+	
 	
 	private Type getType(final Keyword kw)
 	{
@@ -134,31 +144,45 @@ public class GPprog implements GPprogLang, GPprogGridAPI {
 		return null;
 	}
 	
-	private void execOperator(Keyword kw) {
-		switch(kw) {
-		case IF:
-			if(valStack.capacity() >= 3) {
-				valStack
-			}
-		case OR:
-		case NOT:
-		case AND:
+	private void opNot(Integer execState) {
+		switch(execState.intValue()) {
+		case 0: // evaluate first argument
+			// 
+			// update execState to 1
+			Integer newState = dfaStack.pop().intValue();
+			dfaStack.push(newState);
+			sysStack.push(progIter.next());
+			break;
+		case 1:
 		}
+		
 	}
 	
+	
+	
 	@Override
-	public Action eval() {
+	public Action evaluate() {
 		// TODO Auto-generated method stub
-		Iterator<Keyword> iter = prog.iterator();
-		while(iter.hasNext()) {
-			if(!dfsStack.isEmpty()) {
-				Keyword kw = dfsStack.peek();
-				switch(getType(kw)) {
-				case Operator:
-					execOperator(kw);
-					break;
+		progIter = prog.iterator();
+		
+		sysStack.push(progIter.next());
+		dfaStack.push(new Integer(0));
+		
+		while(!sysStack.isEmpty()) {
+			Keyword kw = sysStack.peek();
+			switch(kw) {
+			case IF:
+					
+			case OR:
+					
+			case NOT: opNot(dfaStack.peek()); break;
+			case AND:
+					
 				}
 			}
+
+				
+			
 		}
 		
 		return null;
@@ -181,6 +205,14 @@ public class GPprog implements GPprogLang, GPprogGridAPI {
 		// TODO Auto-generated method stub
 		atGridx = x;
 		atGridy = y;
+	}
+
+
+
+	@Override
+	public void generate() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
