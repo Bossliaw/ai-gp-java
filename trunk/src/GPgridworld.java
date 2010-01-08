@@ -1,7 +1,7 @@
 
 public class GPgridworld implements GPgridworldobj {
 
-	int gridworld [][] = {
+	boolean gridworld [][] = {
 	   { x, x, x, x, x, x, x, x, x, x },
 	   { x, o, o, o, x, x, o, o, o, x },
 	   { x, o, o, o, x, x, o, o, o, x },
@@ -14,7 +14,7 @@ public class GPgridworld implements GPgridworldobj {
 	   { x, x, x, x, x, x, x, x, x, x }
 	};
 	
-	int getGridObj(int x, int y)
+	boolean getGridObj(int x, int y)
 	{
 		return gridworld[x][y];
 	}
