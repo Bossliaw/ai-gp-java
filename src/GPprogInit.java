@@ -10,10 +10,13 @@ public class GPprogInit implements GPprogInitAPI {
 		int i = 0;
 		int time = 1;
 		grammarstack.push(exp);
+		grammarstack.push(exp);
+		grammarstack.push(exp);
 		
 		while(!grammarstack.empty()){
+			System.out.printf("grammarstack size = %d\n", grammarstack.size());
 			//<exp> -> <op-exp> | <action> | <sensor>
-			if(grammarstack.peek() == 19){
+			if(grammarstack.peek() == exp){
 				System.out.print("getin exp\n");
 				grammarstack.pop();
 				
@@ -38,7 +41,7 @@ public class GPprogInit implements GPprogInitAPI {
 			}
 			
 			//<op-exp> -> <if-exp> | <and-exp> | <or-exp> | <not-exp>
-			else if(grammarstack.peek() == 20){
+			else if(grammarstack.peek() == op_exp){
 				System.out.print("getin on_exp\n");
 				grammarstack.pop();
 				i = (int)(Math.random()*4+1);
@@ -58,7 +61,7 @@ public class GPprogInit implements GPprogInitAPI {
 				}
 			}
 			//<action> -> moveE | moveW | moveN | moveS
-			else if(grammarstack.peek() == 21){
+			else if(grammarstack.peek() == action){
 				System.out.print("getin action\n");
 				grammarstack.pop();
 				i = (int)(Math.random()*4+1);
@@ -77,8 +80,8 @@ public class GPprogInit implements GPprogInitAPI {
 					break;	
 				}
 			}
-			//<sensor> -> n | s | w | e | ne | se | nw | sw |0 | 1
-			else if(grammarstack.peek() == 22){
+			//<sensor> -> n | s | w | e | ne | se | nw | sw | F | T
+			else if(grammarstack.peek() == sensor){
 				System.out.print("getin sensor\n");
 				grammarstack.pop();
 				i = (int)(Math.random()*8+1);
@@ -108,15 +111,15 @@ public class GPprogInit implements GPprogInitAPI {
 					gen_code.add(sw);
 					break;
 				case 9:
-					gen_code.add(0);
+					gen_code.add(F);
 					break;
 				case 10:
-					gen_code.add(1);
+					gen_code.add(T);
 					break;				
 				}
 			}
 			//<if-exp> -> IF <exp> <exp> <exp>
-			else if(grammarstack.peek() == 23){
+			else if(grammarstack.peek() == if_exp){
 				System.out.print("getin if\n");
 				grammarstack.pop();
 				grammarstack.push(exp);
@@ -125,7 +128,7 @@ public class GPprogInit implements GPprogInitAPI {
 				gen_code.add(IF);
 			}
 			//<and-exp> -> AND <exp> <exp>
-			else if(grammarstack.peek() == 24){
+			else if(grammarstack.peek() == and_exp){
 				System.out.print("getin and\n");
 				grammarstack.pop();
 				grammarstack.push(exp);
@@ -133,7 +136,7 @@ public class GPprogInit implements GPprogInitAPI {
 				gen_code.add(AND);
 			}
 			//<or-exp> -> OR <exp> <exp>
-			else if(grammarstack.peek() == 25){
+			else if(grammarstack.peek() == or_exp){
 				System.out.print("getin or\n");
 				grammarstack.pop();
 				grammarstack.push(exp);
@@ -141,7 +144,7 @@ public class GPprogInit implements GPprogInitAPI {
 				gen_code.add(OR);
 			}
 			//<not-exp>-> NOT <exp>
-			else if(grammarstack.peek() == 26){
+			else if(grammarstack.peek() == not_exp){
 				System.out.print("getin not\n");
 				grammarstack.pop();
 				grammarstack.push(exp);
@@ -150,9 +153,8 @@ public class GPprogInit implements GPprogInitAPI {
 			time++;
 	}
 		/*
-		System.out.print("link size:"+gen_code.size()+"\n");
 		while(!gen_code.isEmpty()){
-			System.out.print(gen_code.poll()+"\n");
+			System.out.print(gen_code.poll()+" ");
 		}
 		*/
 		return gen_code;

@@ -20,6 +20,27 @@ public interface GPprogLangAPI {
 	int NOT = 16; 
 	int AND = 17; 
 	
+	String KeywordString [] = {
+		"F",
+		"T",
+		"moveN",
+		"moveS",
+		"moveW",
+		"moveE",
+		"n",
+		"s",
+		"w",
+		"e",
+		"nw",
+		"ne",
+		"sw",
+		"se",
+		"IF",
+		"OR",
+		"NOT",
+		"AND"
+	};
+	
 	int KeyWordLowerBound = 0;
 	int KeyWordUpperBound = 17;
 	
