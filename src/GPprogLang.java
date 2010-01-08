@@ -1,12 +1,7 @@
-public interface GPprogLang {
-	
-	enum Type    { Action, Sensor, Operator };
-	enum Keyword { moveN, moveS, moveW, moveE, s, w, n, e, ne, nw, se, sw, IF, AND, OR, NOT };
+import java.util.List;
 
-	enum Action  { moveN, moveS, moveW, moveE, idle };
+public class GPprogLang implements GPprogLangAPI {
 	
-	
-	Action  eval();
 	
 	
 }
