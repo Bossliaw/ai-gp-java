@@ -1,29 +1,30 @@
-import java.util.List;
-
 // KeyWord
 public interface GPprogLangAPI {
 	
-	Integer moveN = new Integer(0);
-	Integer moveS = new Integer(1);
-	Integer moveW = new Integer(2);
-	Integer moveE = new Integer(3);
-	Integer n = new Integer(4);
-	Integer s = new Integer(5);
-	Integer w = new Integer(6);
-	Integer e = new Integer(7);
-	Integer nw = new Integer(8);
-	Integer ne = new Integer(9);
-	Integer sw = new Integer(10);
-	Integer se = new Integer(11);
-	Integer IF = new Integer(12);
-	Integer OR = new Integer(13);
-	Integer NOT = new Integer(14);
-	Integer AND = new Integer(15);
+	int F = 0;
+	int T = 1;
+	int moveN = 2;
+	int moveS = 3;
+	int moveW = 4;
+	int moveE = 5;
+	int n = 6;
+	int s = 7;
+	int w = 8;
+	int e = 9;
+	int nw = 10;
+	int ne = 11;
+	int sw = 12;
+	int se = 13;
+	int IF = 14;
+	int OR = 15;
+	int NOT = 16;
+	int AND = 17;
 	
-	enum Type    { Action, Sensor, Operator };
-
+	int KeyWordLowerBound = 0;
+	int KeyWordUpperBound = 17;
+	
+	enum Type    { Boolean, Action, Sensor, Operator, Invaild };
 	enum Action  { moveN, moveS, moveW, moveE, idle };
-	
-	Type getType();
+
 	
 }

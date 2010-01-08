@@ -83,136 +83,76 @@ system stack
  8. n ne e
  */
 
-public class GPprog implements GPprogLang, GPprogGridAPI {
+public class GPprog implements GPprogLangAPI, GPprogGridAPI
+{
 
 	private GPgridworld gridworld;
 	private int atGridx;
 	private int atGridy;
-	private LinkedList<Keyword> prog;
-	private Iterator<Keyword> progIter;
+	private LinkedList<Integer> prog;
 	
-	// computer stack, register
-	private int retVal; 
-	private Stack<Keyword> sysStack = new Stack<Keyword>();
-	private Stack<Integer> dfaStack = new Stack<Integer>();
+	private GPprogInit progInit;
+	private GPprogEval progEval;
 	
 	public GPprog(GPgridworld gridworld)
 	{
 		this.gridworld = gridworld;
+		progInit = new GPprogInit();
+		progEval = new GPprogEval(this);
 		
-		prog = new LinkedList<Keyword>();
-		prog.add(Keyword.NOT);
-		prog.add(Keyword.AND);
-		prog.add(Keyword.IF);
-		prog.add(Keyword.ne);
-		prog.add(Keyword.IF);
-		prog.add(Keyword.se);
-		prog.add(Keyword.moveS);
-		prog.add(Keyword.moveW);
-		prog.add(Keyword.moveN);
-		prog.add(Keyword.NOT);
-		prog.add(Keyword.NOT);
-		prog.add(Keyword.e);
+		// test
+		prog = new LinkedList<Integer>();
+		prog.add(NOT);
+		prog.add(AND);
+		prog.add(IF);
+		prog.add(ne);
+		prog.add(IF);
+		prog.add(se);
+		prog.add(moveS);
+		prog.add(moveW);
+		prog.add(moveN);
+		prog.add(NOT);
+		prog.add(NOT);
+		prog.add(e);
+		
 		// generate random program
+		// prog = progInit.generate();
 	}
+
 	
-	
-	
-	private Type getType(final Keyword kw)
+	public LinkedList<Integer> getProg()
 	{
-		switch(kw) {
-			case IF:
-			case OR:
-			case AND:
-			case NOT:
-				return Type.Operator;
-			case ne:
-			case se:
-			case nw:
-			case sw:
-			case n:
-			case s:
-			case w:
-			case e:
-				return Type.Sensor;
-			case moveN:
-			case moveS:
-			case moveW:
-			case moveE:
-				return Type.Action;
+		return prog;
+	}
+	
+	@Override
+	public void executeAction() {
+		// TODO Auto-generated method stub
+		Action action = progEval.evaluate();
+		switch(action) {
+		case moveN:
+		case moveS:
+		case moveE:
+		case moveW:
+		case idle:
 		}
-		return null;
 	}
-	
-	private void opNot(Integer execState) {
-		switch(execState.intValue()) {
-		case 0: // evaluate first argument
-			// 
-			// update execState to 1
-			Integer newState = dfaStack.pop().intValue();
-			dfaStack.push(newState);
-			sysStack.push(progIter.next());
-			break;
-		case 1:
+
+	@Override
+	public boolean sensor(int word) {
+		// TODO Auto-generated method stub
+		switch(word) {
+		case n:
+			return gridworld.getGridObj(atGridx, atGridy-1);
+		case s:
+			return gridworld.getGridObj(atGridx, atGridy+1);
+		case w:
+			return gridworld.getGridObj(atGridx-1, atGridy);
+		case e:
+			return gridworld.getGridObj(atGridx+1, atGridy);
+		default:
+			return false;
 		}
-		
-	}
-	
-	
-	
-	@Override
-	public Action evaluate() {
-		// TODO Auto-generated method stub
-		progIter = prog.iterator();
-		
-		sysStack.push(progIter.next());
-		dfaStack.push(new Integer(0));
-		
-		while(!sysStack.isEmpty()) {
-			Keyword kw = sysStack.peek();
-			switch(kw) {
-			case IF:
-					
-			case OR:
-					
-			case NOT: opNot(dfaStack.peek()); break;
-			case AND:
-					
-				}
-			}
-
-				
-			
-		}
-		
-		return null;
-	}
-
-	@Override
-	public int atGridX() {
-		// TODO Auto-generated method stub
-		return atGridx;
-	}
-
-	@Override
-	public int atGridY() {
-		// TODO Auto-generated method stub
-		return atGridy;
-	}
-
-	@Override
-	public void setXY(int x, int y) {
-		// TODO Auto-generated method stub
-		atGridx = x;
-		atGridy = y;
-	}
-
-
-
-	@Override
-	public void generate() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

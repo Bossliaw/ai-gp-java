@@ -1,7 +1,7 @@
 
 public interface GPgridworldobj {
 	
-	int o = 1;
-	int x = 0;
+	boolean o = true;
+	boolean x = false;
 	
 }
