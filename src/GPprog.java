@@ -85,11 +85,11 @@ public class GPprog implements GPprogLangAPI, GPprogAPI
 {
 
 	private GPgridworld gridworld;
-	private int atGridx;
-	private int atGridy;
-	
 	private LinkedList<Integer> prog;
 	private GPprogEval progEval;
+	
+	private int atGridx = -1;
+	private int atGridy = -1;
 	
 	public GPprog(GPgridworld gridworld)
 	{
