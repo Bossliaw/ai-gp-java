@@ -1,20 +1,13 @@
 import java.util.LinkedList;
 
 
-public class GPprocess implements GPprocessAPI {
+public class GPprocess extends GPprocessParam implements GPprocessAPI, GPprogLangAPI {
 	
 	private GPgridworld gridworld;
-	private double survivalRate = 0.1;
-	private double newbirthRate = 1 - survivalRate;
-	private double mutationProb = 0.01;
-	private int    FitSampleNum = 7;
-	
-	private int mutationMaxNumNodes = 100;
-	private int mutationMinNumNodes = 10;
-	private boolean rootIsInternal = true;
 	
 	public GPprocess(GPgridworld gridworld)
 	{
+		super();
 		this.gridworld = gridworld;
 	}
 	
@@ -48,7 +41,6 @@ public class GPprocess implements GPprocessAPI {
 			survivalProgs.add(currProgs.get(mostFitPick));
 		}
 		
-		
 		return survivalProgs;
 	}
 	
@@ -64,21 +56,21 @@ public class GPprocess implements GPprocessAPI {
 		int randpickFatherSubtreeHead = rand(fatherGeneLength);
 		int randpickMotherSubtreeHead = rand(motherGeneLength);
 		
-		// father's subtree replaces mother's subtree
+		// father's subtree replaces mother's subtree		
 		int randpickFatherSubtreeTail = fatherEval.subtree_substringTail(randpickFatherSubtreeHead);
-		int randpickMotherSubtreeTail = motherEval.subtree_substringTail(randpickFatherSubtreeHead);
+		int randpickMotherSubtreeTail = motherEval.subtree_substringTail(randpickMotherSubtreeHead);
 		
 		LinkedList<Integer> fatherSubtree = 
-			new LinkedList<Integer>(fatherGene.subList(randpickFatherSubtreeHead, randpickFatherSubtreeTail));
-		
-		LinkedList<Integer> motherSubtree = 
-			new LinkedList<Integer>(motherGene.subList(randpickMotherSubtreeHead, randpickMotherSubtreeTail));
+			new LinkedList<Integer>(fatherGene.subList(randpickFatherSubtreeHead, randpickFatherSubtreeTail+1));
 		
 		LinkedList<Integer> childGene = motherGene;
-		childGene.removeAll(motherSubtree);
+		for(int i = randpickMotherSubtreeHead; i < (randpickMotherSubtreeTail+1); i++)
+			childGene.remove(randpickMotherSubtreeHead);
 		childGene.addAll(randpickMotherSubtreeHead, fatherSubtree);
 		
 		GPprog child = new GPprog(gridworld, childGene);
+		gridworld.randGrid();
+		child.setGridXY(gridworld.randGridX(), gridworld.randGridY());
 		return child;
 	}
 
@@ -90,7 +82,7 @@ public class GPprocess implements GPprocessAPI {
 		LinkedList<Integer> abnormal_code = new LinkedList<Integer>();		//initial code
 		abnormal_code = abnormal.getProg();
 		
-		GPprogInit init = new GPprogInit(mutationMaxNumNodes, mutationMinNumNodes, rootIsInternal);
+		GPprogInit init = new GPprogInit();
 		LinkedList<Integer> mutation_code = new LinkedList<Integer>();		//mutation code
 		mutation_code = init.generate();
 		
@@ -103,6 +95,8 @@ public class GPprocess implements GPprocessAPI {
 		abnormal_code.addAll(sub_head, mutation_code);
 		
 		GPprog mutate = new GPprog(gridworld, abnormal_code);
+		gridworld.randGrid();
+		mutate.setGridXY(gridworld.randGridX(), gridworld.randGridY());
 		return mutate;
 	}
 
@@ -115,11 +109,11 @@ public class GPprocess implements GPprocessAPI {
 		int newbirth_population = population - survival_population;
 		
 		// mutation  operation (by random test)
-		if(Math.random() < mutationProb) {
-			int randpickMutator = rand(survival_population);
-			GPprog abnormal = mutation(nextGen.get(randpickMutator));
-			nextGen.set(randpickMutator, abnormal);
-		}
+		for(int i = 0; i < survival_population; i++)
+			if(Math.random() < mutationProb) {
+				GPprog abnormal = mutation(nextGen.get(i));
+				nextGen.set(i, abnormal);
+			}
 		
 		// crossover operation
 		for(int i = 0; i < newbirth_population; i++) {
@@ -130,19 +124,6 @@ public class GPprocess implements GPprocessAPI {
 		}
 		
 		return nextGen;
-	}
-
-	@Override
-	public void setParameters(double survivalRate, double mutationProb, int FitSampleNum, 
-			int maxNumNodes, int minNumNodes, boolean rootIsInternal) {
-		// TODO Auto-generated method stub
-		this.survivalRate = survivalRate;
-		this.mutationProb = mutationProb;
-		this.FitSampleNum = FitSampleNum;
-		this.mutationMaxNumNodes = maxNumNodes;
-		this.mutationMinNumNodes = minNumNodes;
-		this.rootIsInternal      = rootIsInternal;
-		
 	}
 
 }
