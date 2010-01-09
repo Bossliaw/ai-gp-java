@@ -4,6 +4,7 @@ import java.util.LinkedList;
 public class GPprocess extends GPprocessParam implements GPprocessAPI, GPprogLangAPI {
 	
 	private GPgridworld gridworld;
+	private int shorten = 0;
 	
 	public GPprocess(GPgridworld gridworld)
 	{
@@ -57,9 +58,18 @@ public class GPprocess extends GPprocessParam implements GPprocessAPI, GPprogLan
 		int randpickFatherSubtreeHead = rand(fatherGeneLength);
 		int randpickMotherSubtreeHead = rand(motherGeneLength);
 		
+		if(randpickFatherSubtreeHead > 10)
+			randpickFatherSubtreeHead -= 10;
+		if(randpickMotherSubtreeHead > 10)
+			randpickMotherSubtreeHead -= 10;
+			
 		// father's subtree replaces mother's subtree		
 		int randpickFatherSubtreeTail = fatherEval.subtree_substringTail(randpickFatherSubtreeHead);
 		int randpickMotherSubtreeTail = motherEval.subtree_substringTail(randpickMotherSubtreeHead);
+		if(randpickFatherSubtreeTail == randpickFatherSubtreeHead && 
+				randpickMotherSubtreeTail != randpickMotherSubtreeHead)
+			shorten++;
+		
 		
 		LinkedList<Integer> fatherSubtree = 
 			new LinkedList<Integer>(fatherGene.subList(randpickFatherSubtreeHead, randpickFatherSubtreeTail+1));
@@ -70,8 +80,6 @@ public class GPprocess extends GPprocessParam implements GPprocessAPI, GPprogLan
 		childGene.addAll(randpickMotherSubtreeHead, fatherSubtree);
 		
 		GPprog child = new GPprog(gridworld, childGene);
-		gridworld.randGrid();
-		child.setGridXY(gridworld.randGridX(), gridworld.randGridY());
 		return child;
 	}
 
@@ -83,7 +91,7 @@ public class GPprocess extends GPprocessParam implements GPprocessAPI, GPprogLan
 		LinkedList<Integer> abnormal_code = new LinkedList<Integer>();		//initial code
 		abnormal_code = abnormal.getProg();
 		
-		GPprogInit init = new GPprogInit();
+		GPprogInit init = new GPprogInit(10, 3, false);
 		LinkedList<Integer> mutation_code = new LinkedList<Integer>();		//mutation code
 		mutation_code = init.generate();
 		
@@ -96,8 +104,6 @@ public class GPprocess extends GPprocessParam implements GPprocessAPI, GPprogLan
 		abnormal_code.addAll(sub_head, mutation_code);
 		
 		GPprog mutate = new GPprog(gridworld, abnormal_code);
-		gridworld.randGrid();
-		mutate.setGridXY(gridworld.randGridX(), gridworld.randGridY());
 		return mutate;
 	}
 
@@ -117,12 +123,15 @@ public class GPprocess extends GPprocessParam implements GPprocessAPI, GPprogLan
 			}
 		
 		// crossover operation
+		shorten = 0;
 		for(int i = 0; i < newbirth_population; i++) {
 			int randpickFather = rand(survival_population);
 			int randpickMother = rand(survival_population);
 			GPprog child = crossover(nextGen.get(randpickFather), nextGen.get(randpickMother));
 			nextGen.add(child);
 		}
+		System.out.printf("shorten: %d\n", shorten);
+		
 		for(int i = 0; i < population; i++)
 			progFitPool.get(i).reinitProgFitness();
 		

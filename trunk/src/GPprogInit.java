@@ -7,21 +7,35 @@ public class GPprogInit extends GPprogInitParam implements GPprogInitAPI {
 	private Stack<Integer> grammarstack = new Stack<Integer>();
 	private int nodeCount;
 	
+	public GPprogInit(int maxNodes, int minNodes, boolean rootInternal) {
+		super(maxNodes, minNodes, rootInternal);
+		if(!probUserDefine) {
+			for(int i = 0; i < genExpProb.length; i++)
+				genExpProb[i]    = 1.0/(double)(genExpProb.length+1);
+			for(int i = 0; i < genSensorProb.length; i++)
+				genSensorProb[i] = 1.0/(double)(genSensorProb.length+1);
+			for(int i = 0; i < genActionProb.length; i++)
+				genActionProb[i] = 1.0/(double)(genActionProb.length+1);
+			for(int i = 0; i < genOpExpProb.length; i++)
+				genOpExpProb[i]  = 1.0/(double)(genOpExpProb.length+1);
+			for(int i = 0; i < genBoolProb.length; i++)
+				genBoolProb[i]   = 1.0/(double)(genBoolProb.length+1);
+		}
+	}
+	
 	public GPprogInit() {
-		
-		super();
-		
-		for(int i = 0; i < genExpProb.length; i++)
-			genExpProb[i]    = 1.0/(double)(genExpProb.length+1);
-		for(int i = 0; i < genSensorProb.length; i++)
-			genSensorProb[i] = 1.0/(double)(genSensorProb.length+1);
-		for(int i = 0; i < genActionProb.length; i++)
-			genActionProb[i] = 1.0/(double)(genActionProb.length+1);
-		for(int i = 0; i < genOpExpProb.length; i++)
-			genOpExpProb[i]  = 1.0/(double)(genOpExpProb.length+1);
-		for(int i = 0; i < genBoolProb.length; i++)
-			genBoolProb[i]   = 1.0/(double)(genBoolProb.length+1);
-		
+		if(!probUserDefine) {
+			for(int i = 0; i < genExpProb.length; i++)
+				genExpProb[i]    = 1.0/(double)(genExpProb.length+1);
+			for(int i = 0; i < genSensorProb.length; i++)
+				genSensorProb[i] = 1.0/(double)(genSensorProb.length+1);
+			for(int i = 0; i < genActionProb.length; i++)
+				genActionProb[i] = 1.0/(double)(genActionProb.length+1);
+			for(int i = 0; i < genOpExpProb.length; i++)
+				genOpExpProb[i]  = 1.0/(double)(genOpExpProb.length+1);
+			for(int i = 0; i < genBoolProb.length; i++)
+				genBoolProb[i]   = 1.0/(double)(genBoolProb.length+1);
+		}
 	}
 	
 // ================================================
@@ -64,14 +78,13 @@ public class GPprogInit extends GPprogInitParam implements GPprogInitAPI {
 			interval[2] = genExpProb[0] + genExpProb[1] + genExpProb[2];
 		}
 		
-		if(rand01 < interval[0])
-			grammarstack.push(action);
-		else if(rand01 >= interval[0] && rand01 < interval[1])
-			grammarstack.push(sensor);
-		else if(rand01 >= interval[1] && rand01 < interval[2])
-			grammarstack.push(bool);
-		else // rand01 >= interval[2] && rand01 < 1
-			grammarstack.push(op_exp);
+		if(rand01 < interval[0]) grammarstack.push(action);
+		else 
+		if(rand01 < interval[1]) grammarstack.push(sensor);
+		else 
+		if(rand01 < interval[2]) grammarstack.push(bool);
+		else 
+		/* rand01 < 1.0       */ grammarstack.push(op_exp);
 	}
 	
 	private void genBool() {

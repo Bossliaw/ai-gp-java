@@ -1,4 +1,4 @@
 
 public class GPprogParam {
-	int numProgRun      = 100;
+	int numProgRun      = 40;
 }

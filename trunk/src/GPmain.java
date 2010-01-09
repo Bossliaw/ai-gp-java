@@ -52,13 +52,13 @@ public class GPmain extends GPparam {
 				}
 			}
 			
-			System.out.printf("Generation[%3d]: maxFitness: %2d, mostFitRuns: %2d, sumFitness: %3d, avgFitness: %.2f\n",
+			System.out.printf("Generation[%3d]: maxFitness: %2d, mostFitRuns: %2d, sumFitness: %3d, avgFitness: %.2f ",
 					generation, maxFitness, progPool.get(mostFitIndividual).getActualRun(),
 					sumFitness, ((double)sumFitness/(double)population));
-			/*
+			
 			System.out.print("mostfit gene: ");
 			progPool.get(mostFitIndividual).dumpProgGene();
-			*/
+			
 			// next generation
 			progPool = process.nextGeneration(progPool, progFitPool);
 			
