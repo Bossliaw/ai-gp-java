@@ -89,20 +89,24 @@ public class GPprog implements GPprogLangAPI, GPprogAPI
 	private int atGridy;
 	
 	private LinkedList<Integer> prog;
-	
-	private GPprogInit progInit;
 	private GPprogEval progEval;
 	
 	public GPprog(GPgridworld gridworld)
 	{
 		this.gridworld = gridworld;
-		progInit = new GPprogInit();
+		GPprogInit progInit = new GPprogInit();
 		progEval = new GPprogEval(this);
 		
 		// generate random program
 		prog = progInit.generate();
 	}
 
+	public GPprog(GPgridworld gridworld, LinkedList<Integer> progGene)
+	{
+		this.gridworld = gridworld;
+		progEval = new GPprogEval(this);
+		prog     = progGene;
+	}
 	
 	public LinkedList<Integer> getProg()
 	{

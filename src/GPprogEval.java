@@ -199,7 +199,9 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 		}
 		
 		// check last keyword
-		if(getType(keyword) == Type.Sensor)
+		if(getType(keyword) == Type.Sensor || 
+		   getType(keyword) == Type.Operator ||
+		   getType(keyword) == Type.Boolean)
 			return Action.idle;
 		else
 		if(getType(keyword) == Type.Action) {

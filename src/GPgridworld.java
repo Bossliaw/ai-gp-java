@@ -16,7 +16,7 @@ public class GPgridworld implements GPgridworldobj {
 	
 	boolean getGridObj(int x, int y)
 	{
-		return gridworld[x][y];
+		return gridworld[y][x];
 	}
 	
 }
