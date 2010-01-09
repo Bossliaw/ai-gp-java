@@ -1,19 +1,6 @@
 
 public class GPgridworld implements GPgridworldobj {
 
-	private boolean gridworld [][] = {
-	   { x, x, x, x, x, x, x, x, x, x },
-	   { x, o, o, o, x, x, o, o, o, x },
-	   { x, o, o, o, x, x, o, o, o, x },
-	   { x, o, o, o, o, o, o, o, o, x },
-	   { x, o, o, o, o, o, o, o, o, x },
-	   { x, o, o, o, o, o, o, o, o, x },
-	   { x, o, o, o, o, o, o, o, o, x },
-	   { x, o, o, o, x, x, o, o, o, x },
-	   { x, o, o, o, x, x, o, o, o, x },
-	   { x, x, x, x, x, x, x, x, x, x }
-	};
-
 	private int availablePosCoord[][] = null;
 	private int randAvailableGrid     = 0;
 	

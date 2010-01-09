@@ -229,6 +229,8 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 		int substringTail = substringHead;
 		Stack<Boolean> dfsStack = new Stack<Boolean>();
 		dfsStack.push(true);
+		Integer code [] = new Integer [prog.getProg().size()];
+		prog.getProg().toArray(code);
 		
 		//System.out.printf("substring head = %d\n", substringHead);
 				
@@ -236,7 +238,7 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 			//System.out.printf("dfsStack size = %d\n", dfsStack.size());
 			dfsStack.pop();
 			//System.out.printf("substring tail = %d\n", substringTail);
-			Integer instruction = prog.getProg().get(substringTail);
+			Integer instruction = code[substringTail];
 			
 			if(instruction == NOT) { 
 				dfsStack.push(true);

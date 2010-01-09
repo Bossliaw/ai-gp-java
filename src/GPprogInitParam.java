@@ -6,11 +6,12 @@ public class GPprogInitParam {
 	boolean rootIsInternal = true;
 	
 	// random program generate parameters
+	boolean probUserDefine = true;
 	// <exp> -> <op-exp> | <action> | <sensor> | <boolean>
-	double actionProb = 0.25;
+	double actionProb = 0.30;
 	double sensorProb = 0.25;
-	double boolProb   = 0.25;
-    double opExpProb  = 0.25;
+	double boolProb   = 0.00;
+    double opExpProb  = 0.45;
 	double genExpProb [] = { actionProb, sensorProb, boolProb };
     
 	// <bool>    ->  T | F
@@ -42,4 +43,15 @@ public class GPprogInitParam {
 	double orProb  = 0.25;
 	double ifProb  = 0.25;
 	double genOpExpProb [] = { notProb, orProb, andProb };
+
+	public GPprogInitParam() {
+		
+	}
+	
+	public GPprogInitParam(int maxNodes, int minNodes, boolean rootIsInternal) {
+		this.maxNumProgNodes = maxNodes;
+		this.minNumProgNodes = minNodes;
+		this.rootIsInternal  = rootIsInternal;
+		
+	}
 }
