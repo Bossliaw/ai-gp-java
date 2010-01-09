@@ -115,6 +115,8 @@ public class GPprog implements GPprogLangAPI, GPprogAPI
 	
 	@Override
 	public void executeAction() {
+		
+		
 		// TODO Auto-generated method stub
 		progEval.subtree_substringTail(0); // grammar check
 		Action action = progEval.evaluate();
@@ -125,8 +127,7 @@ public class GPprog implements GPprogLangAPI, GPprogAPI
 		case moveW: if(sensor(w)) atGridx--; break;
 		case idle: break;
 		}
-		System.out.printf("%d, %d\n", atGridx, atGridy);
-		
+		System.out.printf("%d, %d\n", atGridx, atGridy);	
 	}
 
 	@Override

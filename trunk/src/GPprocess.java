@@ -51,9 +51,26 @@ public class GPprocess implements GPprocessAPI {
 
 	@Override
 	public GPprog mutation(GPprog abnormal) {
-		return abnormal;
 		// TODO Auto-generated method stub
+		int sub_head,sub_end;
 		
+		LinkedList<Integer> abnormal_code = new LinkedList<Integer>();		//initial code
+		abnormal_code = abnormal.getProg();
+		
+		GPprogInit init = new GPprogInit();
+		LinkedList<Integer> mutation_code = new LinkedList<Integer>();		//mutation code
+		mutation_code = init.generate();
+		
+		GPprogEval subtree = new GPprogEval(abnormal);						//get head,end
+		sub_head = (int)(Math.random()*abnormal_code.size());
+		sub_end = subtree.subtree_substringTail(sub_head);
+
+		for(int i = sub_head; i<=sub_end; i++)								//merge tree
+			abnormal_code.remove(sub_head);
+		abnormal_code.addAll(sub_head, mutation_code);
+		
+		GPprog mutate = new GPprog(gridworld, abnormal_code);
+		return mutate;
 	}
 
 	@Override
