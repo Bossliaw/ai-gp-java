@@ -21,23 +21,55 @@ public class GPprogInit implements GPprogInitAPI {
 		this.numMaxNodes = maxNumNodes;
 		this.numMinNodes = minNumNodes;
 		this.rootIsInternal = rootIsInternal;
+		
+		for(int i = 0; i < genExpProb.length; i++)
+			genExpProb[i] = 1/(genExpProb.length+1);
+		for(int i = 0; i < genSensorProb.length; i++)
+			genSensorProb[i] = 1/(genSensorProb.length+1);
+		for(int i = 0; i < genActionProb.length; i++)
+			genActionProb[i] = 1/(genActionProb.length+1);
+		for(int i = 0; i < genOpExpProb.length; i++)
+			genOpExpProb[i] = 1/(genOpExpProb.length+1);
+		for(int i = 0; i < genBoolProb.length; i++)
+			genBoolProb[i] = 1/(genBoolProb.length+1);
+		
 	}
+
+// ================================================
 	
-	public setGenExpProb(double actionProb, double sensorProb, double boolProb) {
+	public void setGenExpProb(double actionProb, double sensorProb, double boolProb) {
 		genExpProb[0] = actionProb;
 		genExpProb[1] = sensorProb;
 		genExpProb[2] = boolProb;
 	}
 	
-	public setActionProb(double moveNprob, double moveEprob, double moveWprob) {
+	public void setActionProb(double moveNprob, double moveEprob, double moveWprob) {
 		genActionProb[0] = moveNprob;
 		genActionProb[1] = moveEprob;
 		genActionProb[2] = moveWprob;
 	}
 	
-	public setOpExpProb(double notprob, double orporb, double andprob) {
-		
+	public void setOpExpProb(double notprob, double orporb, double andprob) {
+		genOpExpProb[0] = notprob;
+		genOpExpProb[1] = orporb;
+		genOpExpProb[2] = andprob;
 	}
+
+	public void setBoolProb(double Tprob) {
+		genBoolProb[0] = Tprob;
+	}
+	
+	public void setSensorProb(double np, double ep, double wp, double sp, double nep, double nwp, double sep) {
+		genSensorProb[0] = np;
+		genSensorProb[1] = ep;
+		genSensorProb[2] = wp;
+		genSensorProb[3] = sp;
+		genSensorProb[4] = nep;
+		genSensorProb[5] = nwp;
+		genSensorProb[6] = sep;
+	}
+	
+// ================================================
 	
 	private boolean IsKeyWord(int symbol) {
 		return (symbol >= KeyWordLowerBound && symbol <= KeyWordUpperBound);
@@ -51,6 +83,8 @@ public class GPprogInit implements GPprogInitAPI {
 		grammarstack.push(exp);
 		nodeCount++;
 	}
+	
+// ================================================
 	
 	private void genExp() {
 		double rand01 = Math.random();
@@ -103,14 +137,43 @@ public class GPprogInit implements GPprogInitAPI {
 		interval[2] = genActionProb[0] + genActionProb[1] + genActionProb[2];
 		
 		if(rand01 < interval[0])
-			grammarstack.push(action);
+			grammarstack.push(moveN);
 		else if(rand01 >= interval[0] && rand01 < interval[1])
-			grammarstack.push(sensor);
+			grammarstack.push(moveE);
 		else if(rand01 >= interval[1] && rand01 < interval[2])
-			grammarstack.push(bool);
+			grammarstack.push(moveW);
 		else // rand01 >= interval[2] && rand01 < 1
-			grammarstack.push(op_exp);
+			grammarstack.push(moveS);
 	}
+	
+	private void genSensor() {
+		double rand01 = Math.random();
+		double op_expProb = 1 - (genActionProb[3]);
+		double interval[] = new double [7];
+		
+		interval[0] = genSensorProb[0];
+		for(int i = 1; i < interval.length; i++)
+			interval[i] = (interval[i-1] + genSensorProb[i]);
+		
+		if(rand01 < interval[0]) grammarstack.push(n);
+		else 
+		if(rand01 < interval[1]) grammarstack.push(e);
+		else 
+		if(rand01 < interval[2]) grammarstack.push(w);
+		else 
+		if(rand01 < interval[3]) grammarstack.push(s);
+		else 
+		if(rand01 < interval[4]) grammarstack.push(ne);
+		else
+		if(rand01 < interval[5]) grammarstack.push(nw);
+		else 
+		if(rand01 < interval[6]) grammarstack.push(se);
+		else 
+								 grammarstack.push(sw);
+			
+	}
+	
+// ================================================
 	
 	public LinkedList<Integer> generate(){
 		
@@ -145,7 +208,7 @@ public class GPprogInit implements GPprogInitAPI {
 		}
 	}
 
-			System.out.print(gen_code.clone()+"\n");
+		System.out.print(gen_code.clone()+"\n");
 		
 		return gen_code;
 	}
