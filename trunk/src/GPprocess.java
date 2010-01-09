@@ -3,21 +3,28 @@ import java.util.LinkedList;
 
 public class GPprocess implements GPprocessAPI {
 	
-	LinkedList<GPfitness> progFit;
+	private GPgridworld gridworld;
+	private double survivalRate = 0.1;
+	private double newbirthRate = 1 - survivalRate;
+	private double mutationProb = 0.01;
+	private int    FitSampleNum = 7;
 	
-	GPgridworld gridworld;
-	
-	public GPprocess(LinkedList<GPfitness> progFit, GPgridworld gridworld)
+	public GPprocess(GPgridworld gridworld)
 	{
-		this.progFit = progFit;
 		this.gridworld = gridworld;
 	}
 	
+	private int rand(int upperlim)
+	{
+		return ((int)( Math.random()*((double)(2*upperlim)) )) % upperlim;
+	}
+	
 	@Override
-	public LinkedList<GPprog> naturalSelection(LinkedList<GPprog> currProgs, int everyNprog, float survivalRate) {
+	public LinkedList<GPprog> naturalSelection(LinkedList<GPprog> currProgs, LinkedList<GPfitness> progFit) {
 		// implement paper's tournament selection
 		// TODO Auto-generated method stub
 		LinkedList<GPprog> survivalProgs = new LinkedList<GPprog>();
+		int everyNprog = FitSampleNum;
 		int population = currProgs.size();
 		int survival_population = (int) (((float)population) * survivalRate);
 		
@@ -27,7 +34,7 @@ public class GPprocess implements GPprocessAPI {
 			int mostFit = -1;
 			int mostFitPick = -1;
 			for(int k = 0; k < everyNprog; k++) {
-				int randPick = ((int)( Math.random()*((double)(2*population)) )) % population;
+				int randPick = rand(population);
 				int randPickFit  = progFit.get(randPick).reportProgFitness();
 				if(mostFit < randPickFit) {
 					mostFit = randPickFit;
@@ -44,8 +51,30 @@ public class GPprocess implements GPprocessAPI {
 	@Override
 	public GPprog crossover(GPprog father, GPprog mother) {
 		// TODO Auto-generated method stub
-		GPprog child = null;
+		LinkedList<Integer> fatherGene = father.getProg();
+		LinkedList<Integer> motherGene = mother.getProg();
+		GPprogEval fatherEval = new GPprogEval(father);
+		GPprogEval motherEval = new GPprogEval(mother);
+		int fatherGeneLength = fatherGene.size();
+		int motherGeneLength = motherGene.size();
+		int randpickFatherSubtreeHead = rand(fatherGeneLength);
+		int randpickMotherSubtreeHead = rand(motherGeneLength);
 		
+		// father's subtree replaces mother's subtree
+		int randpickFatherSubtreeTail = fatherEval.subtree_substringTail(randpickFatherSubtreeHead);
+		int randpickMotherSubtreeTail = motherEval.subtree_substringTail(randpickFatherSubtreeHead);
+		
+		LinkedList<Integer> fatherSubtree = 
+			new LinkedList<Integer>(fatherGene.subList(randpickFatherSubtreeHead, randpickFatherSubtreeTail));
+		
+		LinkedList<Integer> motherSubtree = 
+			new LinkedList<Integer>(motherGene.subList(randpickMotherSubtreeHead, randpickMotherSubtreeTail));
+		
+		LinkedList<Integer> childGene = motherGene;
+		childGene.removeAll(motherSubtree);
+		childGene.addAll(randpickMotherSubtreeHead, fatherSubtree);
+		
+		GPprog child = new GPprog(gridworld, childGene);
 		return child;
 	}
 
@@ -74,9 +103,37 @@ public class GPprocess implements GPprocessAPI {
 	}
 
 	@Override
-	public LinkedList<GPprog> nextGeneration(LinkedList<GPprog> currGeneration) {
+	public LinkedList<GPprog> nextGeneration(LinkedList<GPprog> currGeneration, LinkedList<GPfitness> progFit) {
 		// TODO Auto-generated method stub
-		return null;
+		int population = currGeneration.size();
+		int survival_population = (int) (((float)population) * survivalRate);
+		LinkedList<GPprog> nextGen = naturalSelection(currGeneration, progFit);
+		int newbirth_population = population - survival_population;
+		
+		// mutation  operation (by random test)
+		if(Math.random() < mutationProb) {
+			int randpickMutator = rand(survival_population);
+			GPprog abnormal = mutation(nextGen.get(randpickMutator));
+			nextGen.set(randpickMutator, abnormal);
+		}
+		
+		// crossover operation
+		for(int i = 0; i < newbirth_population; i++) {
+			int randpickFather = rand(survival_population);
+			int randpickMother = rand(survival_population);
+			GPprog child = crossover(nextGen.get(randpickFather), nextGen.get(randpickMother));
+			nextGen.add(child);
+		}
+		
+		return nextGen;
+	}
+
+	@Override
+	public void setParameters(double survivalRate, double mutationProb, int FitSampleNum) {
+		// TODO Auto-generated method stub
+		this.survivalRate = survivalRate;
+		this.mutationProb = mutationProb;
+		this.FitSampleNum = FitSampleNum;
 	}
 
 }

@@ -3,9 +3,11 @@ import java.util.LinkedList;
 
 public interface GPprocessAPI {
 	
-	LinkedList<GPprog> naturalSelection(LinkedList<GPprog> currGPprog, int everyNprog, float survivalRate);
+	void               setParameters(double survivalRate, double mutationProb, int FitSampleNum);
+	
+	LinkedList<GPprog> naturalSelection(LinkedList<GPprog> currGPprog, LinkedList<GPfitness> progFit);
 	GPprog 			   crossover(GPprog father, GPprog mother);
 	GPprog             mutation(GPprog abnormal);
 	
-	LinkedList<GPprog> nextGeneration(LinkedList<GPprog> currGeneration);
+	LinkedList<GPprog> nextGeneration(LinkedList<GPprog> currGeneration, LinkedList<GPfitness> progFit);
 }
