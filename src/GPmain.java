@@ -20,8 +20,6 @@ public class GPmain extends GPparam {
 		
 		for(int i = 0; i < population; i++) {
 			GPprog prog = new GPprog(gridworld);
-			gridworld.randGrid();
-			prog.setGridXY(gridworld.randGridX(), gridworld.randGridY());
 			progPool.add(prog);
 			progFitPool.add(new GPfitness());
 		}
@@ -30,29 +28,41 @@ public class GPmain extends GPparam {
 	
 	public void GPgenerationLoop() {
 		for(int generation = 0; generation <= numGeneration; generation++) {
+			
+			// test fitness
 			for(int i = 0; i < population; i++) {
 				GPprog prog = progPool.get(i);
-				prog.executeAction();
-				progFitPool.get(i).reportProgPosition(prog.atGridX(), prog.atGridY());
+				GPfitness progfit = progFitPool.get(i);
+				for(int k = 0; k < numSwitchPos; k++) {
+					gridworld.randGrid();
+					prog.setGridXY(gridworld.randGridX(), gridworld.randGridY());
+					prog.executeAction(progfit);
+				}
 			}
 			
 			// statistic
 			int sumFitness = 0;
 			int maxFitness = -1;
+			int mostFitIndividual = -1;
 			for(int i = 0; i < population; i++) {
 				sumFitness += progFitPool.get(i).reportProgFitness();
-				if(maxFitness < progFitPool.get(i).reportProgFitness())
+				if(maxFitness < progFitPool.get(i).reportProgFitness()) {
+					mostFitIndividual = i;
 					maxFitness = progFitPool.get(i).reportProgFitness();
+				}
 			}
 			
-			System.out.printf("Generation[%3d]: maxFitness: %3d, sumFitness: %3d, avgFitness: %.2f\n",
-					generation, maxFitness, sumFitness, ((double)sumFitness/(double)population));
+			System.out.printf("Generation[%3d]: maxFitness: %2d, mostFitRuns: %2d, sumFitness: %3d, avgFitness: %.2f\n",
+					generation, maxFitness, progPool.get(mostFitIndividual).getActualRun(),
+					sumFitness, ((double)sumFitness/(double)population));
+			/*
+			System.out.print("mostfit gene: ");
+			progPool.get(mostFitIndividual).dumpProgGene();
+			*/
+			// next generation
+			progPool = process.nextGeneration(progPool, progFitPool);
 			
-			process.nextGeneration(progPool, progFitPool);
-			for(int i = 0; i < population; i++)
-				progFitPool.get(i).reinitProgFitness();
-		}
-		
+		}// end generation loop
 	}
 	
 	public static void main(String[] args) {

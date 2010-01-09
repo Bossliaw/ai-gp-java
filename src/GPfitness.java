@@ -1,19 +1,6 @@
 
 public class GPfitness implements GPfitnessAPI {
 
-	private boolean path_markInit [][] = {
-			   { x, x, x, x, x, x, x, x, x, x },
-			   { x, o, o, o, x, x, o, o, o, x },
-			   { x, o, x, o, x, x, o, x, o, x },
-			   { x, o, x, o, o, o, o, x, o, x },
-			   { x, o, x, x, x, x, x, x, o, x },
-			   { x, o, x, o, o, o, o, x, o, x },
-			   { x, o, x, o, x, x, o, x, o, x },
-			   { x, o, x, o, x, x, o, x, o, x },
-			   { x, o, o, o, x, x, o, o, o, x },
-			   { x, x, x, x, x, x, x, x, x, x }
-			};
-	
 	private boolean path_mark [][] = path_markInit.clone();
 	int fitness = 0;
 	
@@ -28,7 +15,7 @@ public class GPfitness implements GPfitnessAPI {
 		// TODO Auto-generated method stub
 		if(path_mark[atGridy][atGridx]){
 			fitness++;
-			path_mark[atGridy][atGridx] = false;
+			//path_mark[atGridy][atGridx] = false;
 		}
 	}
 
@@ -37,6 +24,10 @@ public class GPfitness implements GPfitnessAPI {
 		// TODO Auto-generated method stub
 		path_mark = path_markInit.clone();
 		fitness = 0;
+	}
+	
+	public void reinitPathMark() {
+		path_mark = path_markInit.clone();
 	}
 
 }
