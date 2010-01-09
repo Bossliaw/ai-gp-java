@@ -49,7 +49,7 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 	private void pushCurrInstruction()
 	{
 		int currKw = getCurrentInstruction();
-		System.out.printf("next instruction = %s\n", KeywordString[currKw]);
+		//System.out.printf("next instruction = %s\n", KeywordString[currKw]);
 		if(getType(currKw) == Type.Operator) {
 			dfaStack.push(evalArg1st);
 		}
@@ -126,7 +126,6 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 	}
 	
 	private void opIF(Integer execState) {
-		System.out.printf("%d\n", execState);
 		switch(execState) {
 		case evalArg1st: // evaluate first argument
 			nextState(opExec);
@@ -164,13 +163,16 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 		
 		int keyword = -1;
 		while(!sysStack.isEmpty()) {
+			keyword = sysStack.peek();
+			/*
 			System.out.printf("sysStack size = %d, ", sysStack.size());
 			System.out.printf("dfaStack size = %d ", dfaStack.size());
 			System.out.printf("PC = %d\n", progCounter);
-			keyword = sysStack.peek();
-			System.out.printf("%s", KeywordString[keyword]);
-			System.out.printf(" retVal = ");
-			System.out.println(retVal);
+			if(getType(keyword) == Type.Operator)
+				System.out.printf("%s, %d\n", KeywordString[keyword], dfaStack.peek());
+			else
+				System.out.printf("%s\n", KeywordString[keyword]);
+			*/
 			switch(keyword) {
 			case NOT: opNot(dfaStack.peek()); break;
 			case IF:  opIF(dfaStack.peek()); break;
@@ -187,6 +189,8 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 				retVal = prog.sensor(keyword); 
 				sysStack.pop();
 				break;
+			case T: retVal = true;  sysStack.pop(); break;
+			case F: retVal = false; sysStack.pop(); break;
 			case moveN:
 			case moveS:
 			case moveW:
@@ -196,6 +200,8 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 				break;
 			default: break;
 			}
+			//System.out.printf("retVal = ");
+			//System.out.println(retVal);
 		}
 		
 		// check last keyword
@@ -224,9 +230,12 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 		Stack<Boolean> dfsStack = new Stack<Boolean>();
 		dfsStack.push(true);
 		
+		//System.out.printf("substring head = %d\n", substringHead);
+				
 		while(!dfsStack.isEmpty()) {
-			System.out.printf("dfsStack size = %d\n", dfsStack.size());
+			//System.out.printf("dfsStack size = %d\n", dfsStack.size());
 			dfsStack.pop();
+			//System.out.printf("substring tail = %d\n", substringTail);
 			Integer instruction = prog.getProg().get(substringTail);
 			
 			if(instruction == NOT) { 
@@ -246,7 +255,7 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 			substringTail++;
 		}
 		
-		return substringTail;
+		return (substringTail-1);
 	}
 
 }

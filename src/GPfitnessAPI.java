@@ -5,4 +5,5 @@ public interface GPfitnessAPI {
 	boolean x = false;
 	void reportProgPosition(int atGridx, int atGridy);
 	int  reportProgFitness();
+	void reinitProgFitness();
 }

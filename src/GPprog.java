@@ -74,7 +74,7 @@ system stack
  8. n ne e
  */
 
-public class GPprog implements GPprogLangAPI, GPprogAPI
+public class GPprog extends GPprogParam implements GPprogLangAPI, GPprogAPI
 {
 
 	private GPgridworld gridworld;
@@ -83,11 +83,13 @@ public class GPprog implements GPprogLangAPI, GPprogAPI
 	
 	private int atGridx = -1;
 	private int atGridy = -1;
+	private int actualRun = 0;
 	
-	public GPprog(GPgridworld gridworld, int maxNumNodes, int minNumNodes, boolean rootIsInternal)
+	public GPprog(GPgridworld gridworld)
 	{
+		super();
 		this.gridworld = gridworld;
-		GPprogInit progInit = new GPprogInit(maxNumNodes, minNumNodes, rootIsInternal);
+		GPprogInit progInit = new GPprogInit();
 		progEval = new GPprogEval(this);
 		
 		// generate random program
@@ -96,6 +98,7 @@ public class GPprog implements GPprogLangAPI, GPprogAPI
 
 	public GPprog(GPgridworld gridworld, LinkedList<Integer> progGene)
 	{
+		super();
 		this.gridworld = gridworld;
 		progEval = new GPprogEval(this);
 		prog     = progGene;
@@ -109,18 +112,19 @@ public class GPprog implements GPprogLangAPI, GPprogAPI
 	@Override
 	public void executeAction() {
 		
-		
 		// TODO Auto-generated method stub
-		progEval.subtree_substringTail(0); // grammar check
-		Action action = progEval.evaluate();
-		switch(action) {
-		case moveN: if(sensor(n)) atGridy--; break;
-		case moveS: if(sensor(s)) atGridy++; break;
-		case moveE: if(sensor(e)) atGridx++; break;
-		case moveW: if(sensor(w)) atGridx--; break;
-		case idle: break;
+		//progEval.subtree_substringTail(0); // grammar check
+		for(actualRun = 0; actualRun < numProgRun; actualRun++) {
+			Action action = progEval.evaluate();
+			switch(action) {
+				case moveN: if(sensor(n)) atGridy--; else return; break;
+				case moveS: if(sensor(s)) atGridy++; else return; break;
+				case moveE: if(sensor(e)) atGridx++; else return; break;
+				case moveW: if(sensor(w)) atGridx--; else return; break;
+				case idle:  return;
+			}
 		}
-		System.out.printf("%d, %d\n", atGridx, atGridy);	
+		//System.out.printf("%d, %d\n", atGridx, atGridy);	
 	}
 
 	@Override
@@ -170,4 +174,8 @@ public class GPprog implements GPprogLangAPI, GPprogAPI
 		atGridy = y;
 	}
 
+	public int getActualRun() {
+		return actualRun;
+	}
+	
 }
