@@ -49,9 +49,9 @@ public class GPprogInit implements GPprogInitAPI {
 		genActionProb[2] = moveWprob;
 	}
 	
-	public void setOpExpProb(double notprob, double orporb, double andprob) {
+	public void setOpExpProb(double notprob, double orprob, double andprob) {
 		genOpExpProb[0] = notprob;
-		genOpExpProb[1] = orporb;
+		genOpExpProb[1] = orprob;
 		genOpExpProb[2] = andprob;
 	}
 
@@ -175,6 +175,50 @@ public class GPprogInit implements GPprogInitAPI {
 	
 // ================================================
 	
+	
+	private void genOp_exp(){	
+		double rand01 = Math.random();
+		double op_expProb = 1 - (genOpExpProb[3]);
+		double interval[] = new double [3];
+		
+		interval[0] = genOpExpProb[0];
+		interval[1] = genOpExpProb[0] + genOpExpProb[1];
+		interval[2] = genOpExpProb[0] + genOpExpProb[1] + genOpExpProb[2];
+		
+		if(rand01 < interval[0])
+			grammarstack.push(if_exp);
+		else if(rand01 >= interval[0] && rand01 < interval[1])
+			grammarstack.push(and_exp);
+		else if(rand01 >= interval[1] && rand01 < interval[2])
+			grammarstack.push(or_exp);
+		else // rand01 >= interval[2] && rand01 < 1
+			grammarstack.push(not_exp);
+	}
+		
+	private void genIf_exp(){
+		pushExp();
+		pushExp();
+		pushExp();
+		gen_code.add(IF);
+	}
+	
+	private void genOr_exp(){
+		pushExp();
+		pushExp();
+		gen_code.add(OR);
+	}
+	
+	private void genNotExp(){
+		pushExp();
+		gen_code.add(NOT);
+	}
+	
+	private void genAndExp(){
+		pushExp();
+		pushExp();
+		gen_code.add(AND);
+	}
+
 	public LinkedList<Integer> generate(){
 		
 		// push initial stack
@@ -197,15 +241,13 @@ public class GPprogInit implements GPprogInitAPI {
 			case bool:    genBool();   break; // <bool>   -> T | F
 			case action:  genAction(); break; // <action> -> moveE | moveW | moveN | moveS
 			case sensor:  genSensor(); break; // <sensor> -> n | s | w | e | ne | se | nw | sw
-			case op_exp:  genOp_exp(); break;
-			case if_exp:  genIf_exp(); break;
-			case or_exp:  genOr_exp(); break;
-			case not_exp: genNotExp(); break;
-			case and_exp: genAndExp(); break;
+			case op_exp:  genOp_exp(); break; //<op-exp> -> <if-exp> | <and-exp> | <or-exp> | <not-exp>
+			case if_exp:  genIf_exp(); break; //<if-exp> -> IF <exp> <exp> <exp>
+			case or_exp:  genOr_exp(); break; //<or-exp> -> OR <exp> <exp>
+			case not_exp: genNotExp(); break; //<not-exp> -> NOT <exp>
+			case and_exp: genAndExp(); break; //<and-exp> -> AND <exp> <exp>
 			default:      break;
 			}
-			
-		}
 	}
 
 		System.out.print(gen_code.clone()+"\n");

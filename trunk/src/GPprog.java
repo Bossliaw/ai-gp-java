@@ -2,15 +2,7 @@ import java.util.LinkedList;
 
 /*
  * 
- * program grammar rules
-<exp>    -> <op-exp> | <action> | <sensor> | <boolean>
-<boolean> -> { T | F }
-<action> -> ( moveE | moveW | moveN | moveS )
-<sensor> -> ( n | s | w | e | ne | se | nw | sw )
-<op-exp> -> <if-exp> | <and-exp> | <or-exp> | <not-exp>
-<and-exp> -> AND <exp> <exp>
-<if-exp> -> IF <exp> <exp> <exp> 
-<or-exp> -> OR <exp> <exp> 
+ * 
 
 program data structure
 1. tree
