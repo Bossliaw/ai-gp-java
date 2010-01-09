@@ -6,6 +6,8 @@ public class GPprogInit implements GPprogInitAPI {
 	public LinkedList<Integer> gen_code = new LinkedList<Integer>();
 	public Stack<Integer> grammarstack = new Stack<Integer>();
 	
+	
+	
 	public LinkedList<Integer> generate(){
 		int i = 0;
 		int time = 1;
