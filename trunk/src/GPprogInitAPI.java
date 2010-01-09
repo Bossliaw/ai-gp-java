@@ -1,12 +1,14 @@
 /*
- <exp>    -> <op-exp> | <action> | <sensor>
-<action> -> ( moveE | moveW | moveN | moveS ) #eval_term (terminate: system stack problem)
-<sensor> -> ( n | s | w | e | ne | se | nw | sw )#eval_sensor (boolean value replacement)
-<op-exp> -> <if-exp> | <and-exp> | <or-exp> | <not-exp>
-<and-exp> -> AND <exp> <exp> #eval_and, return value
-<if-exp> -> IF <exp> <exp> <exp> #eval_if
-<or-exp> -> OR <exp> <exp> #eval_or
-<not-exp>-> NOT <exp> #eval_not
+program grammar rules
+<exp>     -> <op-exp> | <action> | <sensor> | <boolean>
+<boolean> -> { T | F }
+<action>  -> ( moveE | moveW | moveN | moveS )
+<sensor>  -> ( n | s | w | e | ne | se | nw | sw )
+<op-exp>  -> <if-exp> | <and-exp> | <or-exp> | <not-exp>
+<not-exp> -> NOT <exp>
+<and-exp> -> AND <exp> <exp>
+<if-exp>  -> IF <exp> <exp> <exp> 
+<or-exp>  -> OR <exp> <exp> 
  */
 import java.util.LinkedList;
 
@@ -22,6 +24,7 @@ public interface GPprogInitAPI extends GPprogLangAPI {
 	int and_exp =23;
 	int or_exp =24;
 	int not_exp = 25;
+	int bool    = 26;
 	
 	LinkedList<Integer> generate();
 }
