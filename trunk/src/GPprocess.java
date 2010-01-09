@@ -38,6 +38,7 @@ public class GPprocess extends GPprocessParam implements GPprocessAPI, GPprogLan
 					mostFitPick = randPick;
 				}
 			}
+			//System.out.printf("%3d: mostFit %d\n",i, mostFit);
 			survivalProgs.add(currProgs.get(mostFitPick));
 		}
 		
@@ -101,11 +102,11 @@ public class GPprocess extends GPprocessParam implements GPprocessAPI, GPprogLan
 	}
 
 	@Override
-	public LinkedList<GPprog> nextGeneration(LinkedList<GPprog> currGeneration, LinkedList<GPfitness> progFit) {
+	public LinkedList<GPprog> nextGeneration(LinkedList<GPprog> currGeneration, LinkedList<GPfitness> progFitPool) {
 		// TODO Auto-generated method stub
 		int population = currGeneration.size();
 		int survival_population = (int) (((float)population) * survivalRate);
-		LinkedList<GPprog> nextGen = naturalSelection(currGeneration, progFit);
+		LinkedList<GPprog> nextGen = naturalSelection(currGeneration, progFitPool);
 		int newbirth_population = population - survival_population;
 		
 		// mutation  operation (by random test)
@@ -122,6 +123,8 @@ public class GPprocess extends GPprocessParam implements GPprocessAPI, GPprogLan
 			GPprog child = crossover(nextGen.get(randpickFather), nextGen.get(randpickMother));
 			nextGen.add(child);
 		}
+		for(int i = 0; i < population; i++)
+			progFitPool.get(i).reinitProgFitness();
 		
 		return nextGen;
 	}

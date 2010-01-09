@@ -109,23 +109,6 @@ public class GPprog extends GPprogParam implements GPprogLangAPI, GPprogAPI
 		return prog;
 	}
 	
-	@Override
-	public void executeAction() {
-		
-		// TODO Auto-generated method stub
-		//progEval.subtree_substringTail(0); // grammar check
-		for(actualRun = 0; actualRun < numProgRun; actualRun++) {
-			Action action = progEval.evaluate();
-			switch(action) {
-				case moveN: if(sensor(n)) atGridy--; else return; break;
-				case moveS: if(sensor(s)) atGridy++; else return; break;
-				case moveE: if(sensor(e)) atGridx++; else return; break;
-				case moveW: if(sensor(w)) atGridx--; else return; break;
-				case idle:  return;
-			}
-		}
-		//System.out.printf("%d, %d\n", atGridx, atGridy);	
-	}
 
 	@Override
 	public boolean sensor(int word) {
@@ -176,6 +159,30 @@ public class GPprog extends GPprogParam implements GPprogLangAPI, GPprogAPI
 
 	public int getActualRun() {
 		return actualRun;
+	}
+	
+	public void dumpProgGene() {
+		for(int i = 0; i < prog.size(); i++)
+			System.out.printf("%s ", KeywordString[prog.get(i)]);
+		System.out.print("\n");
+	}
+
+	@Override
+	public void executeAction(GPfitness progFit) {
+		// TODO Auto-generated method stub
+		//progEval.subtree_substringTail(0); // grammar check
+		for(actualRun = 0; actualRun < numProgRun; actualRun++) {
+			Action action = progEval.evaluate();
+			switch(action) {
+				case moveN: if(sensor(n)) atGridy--; else return; break;
+				case moveS: if(sensor(s)) atGridy++; else return; break;
+				case moveE: if(sensor(e)) atGridx++; else return; break;
+				case moveW: if(sensor(w)) atGridx--; else return; break;
+				case idle:  return;
+			}
+			progFit.reportProgPosition(atGridx, atGridy);
+		}
+		//System.out.printf("%d, %d\n", atGridx, atGridy);	
 	}
 	
 }

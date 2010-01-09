@@ -2,7 +2,7 @@
 public class GPprogInitParam {
 
 	int     maxNumProgNodes = 100;
-	int     minNumProgNodes = 6;
+	int     minNumProgNodes = 15;
 	boolean rootIsInternal = true;
 	
 	// random program generate parameters
