@@ -3,13 +3,14 @@ import java.util.LinkedList;
 /*
  * 
  * program grammar rules
-<exp>    -> <op-exp> | <action> | <sensor>
-<action> -> ( moveE | moveW | moveN | moveS ) #eval_term (terminate: system stack problem)
-<sensor> -> ( n | s | w | e | ne | se | nw | sw )#eval_sensor (boolean value replacement)
+<exp>    -> <op-exp> | <action> | <sensor> | <boolean>
+<boolean> -> { T | F }
+<action> -> ( moveE | moveW | moveN | moveS )
+<sensor> -> ( n | s | w | e | ne | se | nw | sw )
 <op-exp> -> <if-exp> | <and-exp> | <or-exp> | <not-exp>
-<and-exp> -> AND <exp> <exp> #eval_and, return value
-<if-exp> -> IF <exp> <exp> <exp> #eval_if
-<or-exp> -> OR <exp> <exp> #eval_or
+<and-exp> -> AND <exp> <exp>
+<if-exp> -> IF <exp> <exp> <exp> 
+<or-exp> -> OR <exp> <exp> 
 
 program data structure
 1. tree
@@ -91,10 +92,10 @@ public class GPprog implements GPprogLangAPI, GPprogAPI
 	private int atGridx = -1;
 	private int atGridy = -1;
 	
-	public GPprog(GPgridworld gridworld)
+	public GPprog(GPgridworld gridworld, int maxNumNodes, int minNumNodes, boolean rootIsInternal)
 	{
 		this.gridworld = gridworld;
-		GPprogInit progInit = new GPprogInit();
+		GPprogInit progInit = new GPprogInit(maxNumNodes, minNumNodes, rootIsInternal);
 		progEval = new GPprogEval(this);
 		
 		// generate random program

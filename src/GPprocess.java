@@ -9,6 +9,10 @@ public class GPprocess implements GPprocessAPI {
 	private double mutationProb = 0.01;
 	private int    FitSampleNum = 7;
 	
+	private int mutationMaxNumNodes = 100;
+	private int mutationMinNumNodes = 10;
+	private boolean rootIsInternal = true;
+	
 	public GPprocess(GPgridworld gridworld)
 	{
 		this.gridworld = gridworld;
@@ -16,7 +20,7 @@ public class GPprocess implements GPprocessAPI {
 	
 	private int rand(int upperlim)
 	{
-		return ((int)( Math.random()*((double)(2*upperlim)) )) % upperlim;
+		return (int)(Math.random()*((double)(upperlim)));
 	}
 	
 	@Override
@@ -86,12 +90,12 @@ public class GPprocess implements GPprocessAPI {
 		LinkedList<Integer> abnormal_code = new LinkedList<Integer>();		//initial code
 		abnormal_code = abnormal.getProg();
 		
-		GPprogInit init = new GPprogInit();
+		GPprogInit init = new GPprogInit(mutationMaxNumNodes, mutationMinNumNodes, rootIsInternal);
 		LinkedList<Integer> mutation_code = new LinkedList<Integer>();		//mutation code
 		mutation_code = init.generate();
 		
 		GPprogEval subtree = new GPprogEval(abnormal);						//get head,end
-		sub_head = (int)(Math.random()*abnormal_code.size());
+		sub_head = rand(abnormal_code.size());
 		sub_end = subtree.subtree_substringTail(sub_head);
 
 		for(int i = sub_head; i<=sub_end; i++)								//merge tree
@@ -129,11 +133,16 @@ public class GPprocess implements GPprocessAPI {
 	}
 
 	@Override
-	public void setParameters(double survivalRate, double mutationProb, int FitSampleNum) {
+	public void setParameters(double survivalRate, double mutationProb, int FitSampleNum, 
+			int maxNumNodes, int minNumNodes, boolean rootIsInternal) {
 		// TODO Auto-generated method stub
 		this.survivalRate = survivalRate;
 		this.mutationProb = mutationProb;
 		this.FitSampleNum = FitSampleNum;
+		this.mutationMaxNumNodes = maxNumNodes;
+		this.mutationMinNumNodes = minNumNodes;
+		this.rootIsInternal      = rootIsInternal;
+		
 	}
 
 }
