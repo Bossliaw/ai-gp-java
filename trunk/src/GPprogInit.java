@@ -9,6 +9,7 @@ public class GPprogInit extends GPprogInitParam implements GPprogInitAPI {
 	
 	public GPprogInit(int maxNodes, int minNodes, boolean rootInternal) {
 		super(maxNodes, minNodes, rootInternal);
+		
 		if(!probUserDefine) {
 			for(int i = 0; i < genExpProb.length; i++)
 				genExpProb[i]    = 1.0/(double)(genExpProb.length+1);
@@ -61,7 +62,7 @@ public class GPprogInit extends GPprogInitParam implements GPprogInitAPI {
 		double interval[] = new double [3];
 		
 		if(nodeCount >= maxNumProgNodes) {
-			double shareOpExpProb = op_expProb/3;
+			double shareOpExpProb = op_expProb/2;
 			interval[0] = genExpProb[0] + shareOpExpProb;
 			interval[1] = genExpProb[0] + genExpProb[1] + 2*shareOpExpProb;
 			interval[2] = genExpProb[0] + genExpProb[1] + genExpProb[2] + 3*shareOpExpProb; // should equal to 1

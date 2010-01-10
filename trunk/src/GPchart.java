@@ -4,8 +4,14 @@ import org.jfree.chart.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.category.*;
 
-public class GPchart extends JFrame{
+public class GPchart extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	public GPchart(int generation, int gen_max[], double gen_avg[]){
 		//set Dataset
 		CategoryDataset dataset = setDataset(generation, gen_max, gen_avg); 
@@ -63,12 +69,6 @@ public class GPchart extends JFrame{
 			}
 		}
 		return dataset;
-	}
-
-
-	private String toStriog(int i) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

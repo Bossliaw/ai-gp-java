@@ -8,10 +8,10 @@ public class GPprogInitParam {
 	// random program generate parameters
 	boolean probUserDefine = true;
 	// <exp> -> <op-exp> | <action> | <sensor> | <boolean>
-	double actionProb = 0.30;
-	double sensorProb = 0.25;
+	double actionProb = 0.15;
+	double sensorProb = 0.15;
 	double boolProb   = 0.00;
-    double opExpProb  = 0.45;
+    double opExpProb  = 0.70;
 	double genExpProb [] = { actionProb, sensorProb, boolProb };
     
 	// <bool>    ->  T | F

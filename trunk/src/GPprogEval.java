@@ -15,11 +15,17 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 		this.prog = prog;
 	}
 	
-	private Integer getCurrentInstruction() {
-		return prog.getProg().get(progCounter);
+	public Integer getNode(int index)
+	{
+		return prog.getCode().get(index);
 	}
 	
-	private Type getType(Integer wordcode) {
+	private Integer getCurrentInstruction() 
+	{
+		return prog.getCode().get(progCounter);
+	}
+	
+	public Type getType(Integer wordcode) {
 		// TODO Auto-generated method stub
 		if(wordcode < KeyWordLowerBound || wordcode > KeyWordUpperBound)
 			return Type.Invaild;
@@ -229,16 +235,14 @@ public class GPprogEval implements GPprogEvalAPI, GPprogLangAPI {
 		int substringTail = substringHead;
 		Stack<Boolean> dfsStack = new Stack<Boolean>();
 		dfsStack.push(true);
-		Integer code [] = new Integer [prog.getProg().size()];
-		prog.getProg().toArray(code);
-		
+
 		//System.out.printf("substring head = %d\n", substringHead);
 				
 		while(!dfsStack.isEmpty()) {
 			//System.out.printf("dfsStack size = %d\n", dfsStack.size());
 			dfsStack.pop();
 			//System.out.printf("substring tail = %d\n", substringTail);
-			Integer instruction = code[substringTail];
+			Integer instruction = prog.getCode().get(substringTail);
 			
 			if(instruction == NOT) { 
 				dfsStack.push(true);
