@@ -37,6 +37,7 @@ public class GPmain extends GPparam {
 					gridworld.randGrid();
 					prog.setGridXY(gridworld.randGridX(), gridworld.randGridY());
 					prog.executeAction(progfit);
+					
 				}
 			}
 			
@@ -56,6 +57,9 @@ public class GPmain extends GPparam {
 					generation, maxFitness, progPool.get(mostFitIndividual).getActualRun(),
 					sumFitness, ((double)sumFitness/(double)population));
 			
+			gen_max[generation] = maxFitness;
+			gen_avg[generation] =sumFitness/population;
+			
 			System.out.print("mostfit gene: ");
 			progPool.get(mostFitIndividual).dumpProgGene();
 			
@@ -63,12 +67,15 @@ public class GPmain extends GPparam {
 			progPool = process.nextGeneration(progPool, progFitPool);
 			
 		}// end generation loop
+		
+		new GPchart(numGeneration, gen_max, gen_avg);
 	}
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		GPmain gp = new GPmain();
 		gp.GPgenerationLoop();
+
 	}
 
 }
