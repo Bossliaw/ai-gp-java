@@ -12,5 +12,4 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="GPmain"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="ai-gp-java"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms512m -Xmx1024m"/>
-<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="D:\AI-GP-JAVA\ai-gp-java"/>
 </launchConfiguration>
