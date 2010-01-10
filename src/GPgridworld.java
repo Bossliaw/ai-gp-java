@@ -27,7 +27,7 @@ public class GPgridworld implements GPgridworldobj {
 	}
 	
 	void randGrid() {
-		randAvailableGrid = ((int)(Math.random()*(float)(availablePosCoord.length)));
+		randAvailableGrid = ((int)(Math.random()*(double)(availablePosCoord.length)));
 	}
 	
 	int randGridX()

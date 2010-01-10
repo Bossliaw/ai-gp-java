@@ -12,7 +12,11 @@ public class GPmain extends GPparam {
 	LinkedList<GPprog> progPool;
 	LinkedList<GPfitness> progFitPool;
 	
-	public GPmain() {
+	int genMaxFit [] = new int [numGeneration+1];
+	double genAvgFit [] = new double [numGeneration+1];
+	
+	public GPmain() 
+	{
 		gridworld = new GPgridworld();
 		process   = new GPprocess(gridworld);
 		progPool  = new LinkedList<GPprog>();
@@ -23,10 +27,9 @@ public class GPmain extends GPparam {
 			progPool.add(prog);
 			progFitPool.add(new GPfitness());
 		}
-		
 	}
-	
-	public void GPgenerationLoop() {
+	public void generationLoop() 
+	{
 		for(int generation = 0; generation <= numGeneration; generation++) {
 			
 			// test fitness
@@ -37,45 +40,63 @@ public class GPmain extends GPparam {
 					gridworld.randGrid();
 					prog.setGridXY(gridworld.randGridX(), gridworld.randGridY());
 					prog.executeAction(progfit);
-					
+					progfit.reinitPathMark();
 				}
 			}
 			
-			// statistic
-			int sumFitness = 0;
-			int maxFitness = -1;
-			int mostFitIndividual = -1;
-			for(int i = 0; i < population; i++) {
-				sumFitness += progFitPool.get(i).reportProgFitness();
-				if(maxFitness < progFitPool.get(i).reportProgFitness()) {
-					mostFitIndividual = i;
-					maxFitness = progFitPool.get(i).reportProgFitness();
-				}
-			}
-			
-			System.out.printf("Generation[%3d]: maxFitness: %2d, mostFitRuns: %2d, sumFitness: %3d, avgFitness: %.2f ",
-					generation, maxFitness, progPool.get(mostFitIndividual).getActualRun(),
-					sumFitness, ((double)sumFitness/(double)population));
-			
-			gen_max[generation] = maxFitness;
-			gen_avg[generation] =sumFitness/population;
-			
-			System.out.print("mostfit gene: ");
-			progPool.get(mostFitIndividual).dumpProgGene();
-			
+			statistic(generation);
+
 			// next generation
 			progPool = process.nextGeneration(progPool, progFitPool);
-			
+			System.gc();
 		}// end generation loop
-		
-		new GPchart(numGeneration, gen_max, gen_avg);
 	}
-	
+	public void showChart()
+	{
+		new GPchart(numGeneration, genMaxFit, genAvgFit);
+	}
+	public void statistic(int generation)
+	{
+		int sumFitness = 0;
+		int maxFitness = -1;
+		int mostFitIndividual = -1;
+		
+		int nodeCount [] = new int [statNumSlots];
+		
+		for(int i = 0; i < population; i++) {
+			for(int k = 0; k < nodeCount.length; k++) {
+				int numNodes = progPool.get(i).getCode().size();
+				if(numNodes >= k*statInterval+1 && numNodes <= (k+1)*statInterval)
+					nodeCount[k]++;
+			}
+			sumFitness += progFitPool.get(i).reportProgFitness();
+			if(maxFitness < progFitPool.get(i).reportProgFitness()) {
+				mostFitIndividual = i;
+				maxFitness = progFitPool.get(i).reportProgFitness();
+			}
+		}
+		genMaxFit[generation] = maxFitness;
+		genAvgFit[generation] = ((double)sumFitness) / ((double)population);
+		System.out.printf("Generation[%3d]: maxFitness: %2d, mostFitRuns: %2d, sumFitness: %3d, avgFitness: %.2f ",
+				generation, maxFitness, progPool.get(mostFitIndividual).getActualRun(),
+				sumFitness, genAvgFit[generation]);
+		
+		System.out.print("mostfit gene: ");
+		progPool.get(mostFitIndividual).dumpProgGene();
+		
+		System.out.print("node count statistic:\n");
+		for(int k = 0; k < nodeCount.length; k++) {
+			System.out.printf("%3d ~ %3d: ", (k*statInterval+1), (k+1)*statInterval);
+			System.out.printf("%d\n", nodeCount[k]);
+		}
+		
+		System.out.printf("free memory: %d\n", Runtime.getRuntime().freeMemory());
+	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		GPmain gp = new GPmain();
-		gp.GPgenerationLoop();
-
+		gp.generationLoop();
+		gp.showChart();
 	}
 
 }

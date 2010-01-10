@@ -6,5 +6,4 @@ public interface GPprogAPI extends GPprogLangAPI {
 	int     atGridX();
 	int     atGridY();
 	void    setGridXY(int x, int y);
-	
 }

@@ -78,8 +78,8 @@ public class GPprog extends GPprogParam implements GPprogLangAPI, GPprogAPI
 {
 
 	private GPgridworld gridworld;
-	private LinkedList<Integer> prog;
-	private GPprogEval progEval;
+	private LinkedList<Integer> code;
+	private GPprogEval eval;
 	
 	private int atGridx = -1;
 	private int atGridy = -1;
@@ -89,26 +89,32 @@ public class GPprog extends GPprogParam implements GPprogLangAPI, GPprogAPI
 	{
 		super();
 		this.gridworld = gridworld;
-		GPprogInit progInit = new GPprogInit();
-		progEval = new GPprogEval(this);
 		
-		// generate random program
-		prog = progInit.generate();
+		GPprogInit progInit = new GPprogInit();	
+		code = progInit.generate(); // generate random program
+		eval = new GPprogEval(this);
+		
+		
 	}
 
-	public GPprog(GPgridworld gridworld, LinkedList<Integer> progGene)
+	public GPprog(GPgridworld gridworld, LinkedList<Integer> GeneCode)
 	{
 		super();
 		this.gridworld = gridworld;
-		progEval = new GPprogEval(this);
-		prog     = progGene;
+		
+		code     = GeneCode;
+		eval = new GPprogEval(this);
 	}
 	
-	public LinkedList<Integer> getProg()
+	public LinkedList<Integer> getCode()
 	{
-		return prog;
+		return code;
 	}
 	
+	public GPprogEval getEval()
+	{
+		return eval;
+	}
 
 	@Override
 	public boolean sensor(int word) {
@@ -162,8 +168,8 @@ public class GPprog extends GPprogParam implements GPprogLangAPI, GPprogAPI
 	}
 	
 	public void dumpProgGene() {
-		for(int i = 0; i < prog.size(); i++)
-			System.out.printf("%s ", KeywordString[prog.get(i)]);
+		for(int i = 0; i < code.size(); i++)
+			System.out.printf("%s ", KeywordString[code.get(i)]);
 		System.out.print("\n");
 	}
 
@@ -172,7 +178,7 @@ public class GPprog extends GPprogParam implements GPprogLangAPI, GPprogAPI
 		// TODO Auto-generated method stub
 		//progEval.subtree_substringTail(0); // grammar check
 		for(actualRun = 0; actualRun < numProgRun; actualRun++) {
-			Action action = progEval.evaluate();
+			Action action = eval.evaluate();
 			switch(action) {
 				case moveN: if(sensor(n)) atGridy--; else return; break;
 				case moveS: if(sensor(s)) atGridy++; else return; break;
@@ -184,5 +190,4 @@ public class GPprog extends GPprogParam implements GPprogLangAPI, GPprogAPI
 		}
 		//System.out.printf("%d, %d\n", atGridx, atGridy);	
 	}
-	
 }
